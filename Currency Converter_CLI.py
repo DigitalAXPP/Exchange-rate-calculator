@@ -8,7 +8,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--amount', type=int, default=100,
                         help='Insert parameter you want to have converted.')
-    parser.add_argument('-ci', '--currency_in', type=str, default='czk',
+    parser.add_argument('-ci', '--currency_in', type=str, default='eur',
                         help='Insert the currency of your amount.')
     parser.add_argument('-co', '--currency_out', type=str, default=None,
                         help='OPTIONAL. Insert the currency you want your amount to'
@@ -34,17 +34,7 @@ def convert_amount(args):
 
     Currencies
     ----------
-    USD, EUR, GBP, JPY, AUD, CAD, CHF, XAF, TJS, MGA, LRD, SSP, LSL, SCR
-    DKK, AED, VND, EGP, SVC, TTD, GHS, MRU, TZS, KWD, PEN, JOD, IQD, CVE
-    LAK, DOP, MNT, NZD, RON, BDT, PYG, MAD, XPF, AOA, YER, SAR, TRY, IDR
-    KZT, BOB, BZD, KMF, ALL, KHR, ZAR, PHP, TMT, AFN, JMD, GIP, SZL, NPR
-    THB, TWD, UAH, ETB, SRD, SYP, ERN, SOS, KRW, BHD, NGN, RSD, MKD, SBD
-    ANG, MOP, WST, MUR, HUF, BYN, ARS, TND, BIF, ZMW, GTQ, BAM, DZD, PLN
-    HRK, HKD, AMD, VES, BSD, GNF, GEL, OMR, BND, SGD, MXN, MDL, NIO, GYD
-    RWF, SLL, MVR, COP, XOF, UZS, PAB, NAD, SDG, MZN, KES, INR, BBD, PGK
-    IRR, GMD, XCD, HTG, TOP, UGX, CNY, MYR, BGN, PKR, LBP, LYD, AWG, MWK
-    CUP, VUV, NOK, ISK, BRL, AZN, UYU, STN, DJF, MMK, QAR, BWP, RUB, ILS
-    KGS, CRC, FJD, CDF, HNL, LKR, CLP, SEK
+    USD, EUR, GBP, JPY, AUD, CAD, CHF, DKK, AED, CZK, PLN
 
     Methods
     -------
@@ -82,7 +72,7 @@ def convert_amount(args):
 
     # Setting path to the 'Currency' folder and load the JSON file
     try:
-        folder = os.path.join(os.curdir, 'Currency', '{0}.txt'.format(currency_in))
+        folder = os.path.join(os.curdir, '{0}.txt'.format(currency_in))
         with open(folder, 'r') as json_src:
             content = json.load(json_src)
     except FileNotFoundError:

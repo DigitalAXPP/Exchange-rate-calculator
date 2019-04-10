@@ -6,7 +6,7 @@ import os
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-a', '--amount', type=int, default=100,
+    parser.add_argument('-a', '--amount', type=float, default=1750,
                         help='Insert parameter you want to have converted.')
     parser.add_argument('-ci', '--currency_in', type=str, default='eur',
                         help='Insert the currency of your amount.')
@@ -83,14 +83,45 @@ def convert_amount(args):
     # If currency_out has been specified, the amount will be multiplied by the currency rate.
     # Otherwise, if currency_out is None, the amount will be multiplied by all currencies and
     # printed separately.
+
+    # Create Output format
+
+    frame = """
+    {
+        "input": {
+            "amount": 100,
+            "currency": "czk"
+        },
+        "output": {
+            "eur": 150
+        }
+    }
+    """
+
+    data = json.loads(frame)
+    output_dict = dict()
+
+    try:
+        data["input"]["amount"] = amount
+        data["input"]["currency"] = currency_in
+    except Exception as e:
+        return e
+
     try:
         if currency_out is not None:
-            output = amount * content[currency_out]["rate"]
-            return "{0} {1}".format(round(output, 2), content[currency_out]["alphaCode"])
+            output = round(amount * content[currency_out]["rate"], 2)
+            data["output"] = {content[currency_out]["alphaCode"]: output}
+            out = json.dumps(data, indent=2)
+            return out
         else:
-            for k, v in content.items():
+            for v in content.values():
                 output = amount * v["rate"]
-                print("{0} {1}".format(round(output, 2), v["alphaCode"]))
+                output_dict[v["alphaCode"]] = output
+                data["output"] = output_dict
+
+        out = json.dumps(data, indent=2)
+        return out
+
     except (ValueError, KeyError):
         return "Please enter a valid, three character string for your currency."
 

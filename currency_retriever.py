@@ -61,32 +61,9 @@ class CurrencyConverter:
     """
 
     def __init__(self, amount, currency_in, currency_out = None):
-        try:
-            self.amount = int(amount)
-        except (ValueError, NameError):
-            print("Please enter an integer as amount.")
-            exit()
-
-        try:
-            if isinstance(currency_in, str):
-                self.currency_in = currency_in
-            else:
-                if not isinstance(currency_in, str):
-                    raise CurrencyValueError
-        except CurrencyValueError:
-            print("Please enter a three character string as currency.")
-            exit()
-
-        try:
-            if currency_out is None:
-                self.currency_out = currency_out
-            elif isinstance(currency_out, str):
-                self.currency_out = currency_out
-            else:
-                raise CurrencyValueError
-        except CurrencyValueError:
-            print("Please enter a three character string as currency.")
-            exit()
+        self.amount = amount
+        self.currency_in = currency_in
+        self.currency_out = currency_out
 
     def convert(self):
 
@@ -119,13 +96,14 @@ class CurrencyConverter:
             rweb = requests.get(web)
         except requests.exceptions.ConnectionError:
             return "Connection to website failed. " \
-                   "Please verify your internet connection."
+                    "Please verify your internet connection."
 
         try:
             jdweb = json.dumps(rweb.json(), indent=2)
             jlweb = json.loads(jdweb)
         except json.decoder.JSONDecodeError:
             print("Your currency input is probably incorrect.")
+            exit()
 
         # Currency conversion block. If no target currency was entered, the amount will be
         # multiplied with the exchange 'rate' for every available currency. Otherwise, if
@@ -135,15 +113,19 @@ class CurrencyConverter:
 
         try:
             if self.currency_out is None:
-                for k,v in jlweb.items():
+                for v in jlweb.values():
                     output = self.amount * v["rate"]
-                    print(round(output, 2), v["alphaCode"])
+                    print('{:<10} {:<10}'.format(round(output, 2), v["alphaCode"]))
             else:
                 output = self.amount * jlweb[self.currency_out]["rate"]
-                print(round(output,2), jlweb[self.currency_out]["alphaCode"])
+                print('{:<10} {:<10}'.format(round(output,2), jlweb[self.currency_out]["alphaCode"]))
         except KeyError:
             print("Your currency output is not available.")
+        except TypeError:
+            print("Please enter an integer/float as amount.")
+        except UnboundLocalError:
+            print("Please enter a three character currency as input.")
 
 
 if __name__ == '__main__':
-    c = CurrencyConverter(amount=1000, currency_in="czk", currency_out="cad").convert()
+    c = CurrencyConverter(amount=100, currency_in="usd" , currency_out=None).convert()
